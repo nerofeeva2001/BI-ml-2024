@@ -26,39 +26,29 @@ class KNNClassifier:
         distances = np.abs(X[:, np.newaxis, :] - self.train_X).sum(axis=2)
         return distances.astype(int) 
     def predict(self, X, n_loops=0):
-        # Выбор метода вычисления расстояний
           if n_loops == 0:
               distances = self.compute_distances_no_loops(X) 
           elif n_loops == 1:
               distances = self.compute_distances_one_loop(X)
           else:  # n_loops == 2
               distances = self.compute_distances_two_loops(X)
-          # Определение типа задачи и вызов соответствующей функции предсказания
           if len(np.unique(self.train_y)) == 2:
               prediction = self.predict_labels_binary(distances)          
           else:
               prediction = self.predict_labels_multiclass(distances)
           return prediction.astype(int) 
     def predict_labels_binary(self, distances)
-        # Инициализация массива для хранения предсказаний
         num_test = distances.shape[0]
         prediction = np.zeros(num_test) 
-        # Проходим по всем тестовым примерам
         for i in range(num_test):
-            # Находим индексы k ближайших тренировочных примеров
             closest_y = self.train_y[np.argsort(distances[i])[:self.k]]
             print(closest_y)
-            # Выбираем наиболее часто встречающийся класс среди ближайших соседей
             prediction[i] = np.argmax(np.bincount(closest_y))
-            return prediction.astype(int) 
-            
+            return prediction.astype(int)            
     def predict_labels_multiclass(self, distances):
         num_test = distances.shape[0]
         y_pred = np.zeros(num_test, dtype=int)
         for i in range(num_test):
-            # Находим k ближайших соседей для i-го тестового образца
             closest_y = self.train_y[np.argsort(distances[i, :])[:self.k]]
-
-            # Выбираем наиболее часто встречающийся класс среди ближайших соседей
             y_pred[i] = np.argmax(np.bincount(closest_y))
             return prediction.astype(int) 
